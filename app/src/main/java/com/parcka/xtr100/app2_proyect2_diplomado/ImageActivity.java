@@ -1,20 +1,25 @@
 package com.parcka.xtr100.app2_proyect2_diplomado;
 
 import android.content.Intent;
+import android.media.Image;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
+import android.util.Patterns;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
 
 public class ImageActivity extends AppCompatActivity {
 
+    private static final String TAG = ImageActivity.class.getSimpleName();
     ImageView imageView;
     EditText editTextUrl;
     String url = "http://static3.elblogverde.com/wp-content/uploads/2015/03/naturaleza-paisaje.jpg";
@@ -68,11 +73,23 @@ public class ImageActivity extends AppCompatActivity {
         overridePendingTransition(R.anim.in_from_left, R.anim.out_to_right);
     }
 
-    public void searchImage(View view){
+    public void searchImage(View view) {
         //TODO: Validar la url desde el input
-        Glide.with(this)
-                .load(url)
-                .into(imageView);
+
+        if (Patterns.WEB_URL.matcher(editTextUrl.getText().toString()).matches()) {
+
+            try {
+                Glide.with(this)
+                        .load(editTextUrl.getText().toString())
+                        .into(imageView);
+            }catch (Exception e){
+                Log.e(TAG,"Error Obteniendo imagen",e);
+                Toast.makeText(ImageActivity.this, "Error Obteniendo la Imagen", Toast.LENGTH_SHORT).show();
+            }
+
+        }else {
+            Toast.makeText(ImageActivity.this, "La url no es valida", Toast.LENGTH_SHORT).show();
+        }
     }
 
 }
