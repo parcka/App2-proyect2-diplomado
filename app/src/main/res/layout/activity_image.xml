@@ -11,6 +11,11 @@
         android:id="@+id/toolbar_image"
         layout="@layout/toolbar_generic" />
 
+    <FrameLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="right"></FrameLayout>
+
     <TextView
         android:id="@+id/textView"
         android:layout_width="wrap_content"
@@ -30,6 +35,11 @@
         android:text="Buscar Imagen"
         android:id="@+id/button"
         android:onClick="searchImage" />
+
+    <FrameLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="right"></FrameLayout>
 
     <ImageView
         android:id="@+id/imageView"

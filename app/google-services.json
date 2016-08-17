@@ -1,0 +1,35 @@
+{
+  "project_info": {
+    "project_number": "189418145384",
+    "project_id": "gcm-test-140501"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:189418145384:android:6588236d2dca6b24",
+        "android_client_info": {
+          "package_name": "com.parcka.xtr100.app2_proyect2_diplomado"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyB0Ffhg1uRfZ3_IoFNxnOR9RAGJaOlFfuE"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 1,
+          "other_platform_oauth_client": []
+        },
+        "ads_service": {
+          "status": 1
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

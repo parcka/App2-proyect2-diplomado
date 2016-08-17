@@ -15,6 +15,7 @@ import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.parcka.xtr100.app2_proyect2_diplomado.tools.GCMRegistrationIntentService;
 import com.parcka.xtr100.app2_proyect2_diplomado.tools.ParseTime;
 
 import java.io.IOException;
@@ -51,6 +52,9 @@ public class MusicActivity extends AppCompatActivity implements View.OnClickList
                 mp.start();
             }
         });
+
+        Intent itent = new Intent(this, GCMRegistrationIntentService.class);
+        startService(itent);
 
 
     }

@@ -1,3 +1,4 @@
 <resources>
     <string name="app_name">App2-proyect2-diplomado</string>
+    <string name="gcm_SenderId">189418145384</string>
 </resources>
