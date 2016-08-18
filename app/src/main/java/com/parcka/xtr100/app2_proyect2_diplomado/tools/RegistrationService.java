@@ -14,13 +14,13 @@ import com.parcka.xtr100.app2_proyect2_diplomado.R;
  * Created by XTR100 on 15/08/2016.
  */
 
-public class GCMRegistrationIntentService extends IntentService {
+public class RegistrationService extends IntentService {
     //Constants for success and errors
     public static final String REGISTRATION_SUCCESS = "RegistrationSuccess";
     public static final String REGISTRATION_ERROR = "RegistrationError";
 
     //Class constructor
-    public GCMRegistrationIntentService() {
+    public RegistrationService() {
         super("");
     }
 

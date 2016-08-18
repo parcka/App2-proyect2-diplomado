@@ -12,10 +12,9 @@
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE"/>
     <uses-permission android:name="com.android.vending.BILLING" />
 
-    <permission
-        android:name="com.parcka.xtr100.app2_proyect2_diplomado.C2D_MESSAGE"
+    <permission android:name="com.parcka.xtr100.app2_proyect2_diplomado.permission.C2D_MESSAGE"
         android:protectionLevel="signature" />
-    <uses-permission android:name="net.simplifiedcoding.androidgcm.permission.C2D_MESSAGE" />
+    <uses-permission android:name="com.parcka.xtr100.app2_proyect2_diplomado.permission.C2D_MESSAGE" />
 
 
     <application
@@ -40,22 +39,29 @@
             <intent-filter>
                 <action android:name="com.google.android.c2dm.intent.RECEIVE" />
                 <action android:name="com.google.android.c2dm.intent.REGISTRATION" />
+                <category android:name="com.parcka.xtr100.app2_proyect2_diplomado" />
             </intent-filter>
         </receiver>
 
-        <!--
-            GCM Receiver Service
-        -->
-<!--        <service
-            android:name=".tools.GCMRegistrationIntentService"
+
+        <service
+            android:name=".tools.PushListenerService"
+            android:exported="false" >
+            <intent-filter>
+                <action android:name="com.google.android.c2dm.intent.RECEIVE" />
+            </intent-filter>
+        </service>
+
+        <service
+            android:name=".tools.RegistrationService"
             android:exported="false">
             <intent-filter>
                 <action android:name="com.google.android.c2dm.intent.RECEIVE" />
             </intent-filter>
-        </service>-->
+        </service>
 
         <service
-            android:name=".tools.GCMRegistrationIntentService"
+            android:name=".tools.TokenRefreshListenerService"
             android:exported="false">
             <intent-filter>
                 <action android:name="com.google.android.gms.iid.InstanceID" />

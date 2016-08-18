@@ -15,8 +15,9 @@ import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.parcka.xtr100.app2_proyect2_diplomado.tools.GCMRegistrationIntentService;
+import com.parcka.xtr100.app2_proyect2_diplomado.tools.RegistrationService;
 import com.parcka.xtr100.app2_proyect2_diplomado.tools.ParseTime;
+import com.parcka.xtr100.app2_proyect2_diplomado.tools.Utils;
 
 import java.io.IOException;
 import java.util.HashMap;
@@ -53,9 +54,13 @@ public class MusicActivity extends AppCompatActivity implements View.OnClickList
             }
         });
 
-        Intent itent = new Intent(this, GCMRegistrationIntentService.class);
-        startService(itent);
-
+        if(Utils.CheckPlayServices(this)){
+            Log.d(TAG,"Existe Google Play");
+            Intent i = new Intent(this, RegistrationService.class);
+            startService(i);
+        }else {
+            Log.d(TAG,"NO Existe Google Play");
+        }
 
     }
 
