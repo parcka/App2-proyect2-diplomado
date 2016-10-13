@@ -33,26 +33,30 @@ public class PushListenerService extends GcmListenerService {
         int action = Integer.parseInt(data.getString("action"));
         Log.d(TAG, "GCM Message received is " + msg);
         // Notifying to user.
-        notifyUser(getApplicationContext(), msg, action);
+        notifyUser(getApplicationContext(), data, action);
     }
 
-    public void notifyUser(Context context, String data, int action) {
+    public void notifyUser(Context context, Bundle data, int action) {
+        //Action 1 para musica
+        //Action 0 para Imagen
         Intent intent;
         if (action == 1) {
             intent = launchActivity(context, data, MusicActivity.class);
 
+
         } else {
             intent = launchActivity(context, data, ImageActivity.class);
+
         }
 
         PendingIntent pendingIntent = PendingIntent.getActivity(context, 0, intent, PendingIntent.FLAG_UPDATE_CURRENT);
         NotificationCompat.Builder builder = new NotificationCompat.Builder(context);
         builder.setSmallIcon(R.mipmap.iconandroid);
         builder.setAutoCancel(true);
-        builder.setContentTitle("Abre el Activity");
+        builder.setContentTitle(data.getString("message"));
         builder.setColor(ContextCompat.getColor(context, R.color.colorPrimary));
         builder.setContentIntent(pendingIntent);
-        builder.setContentText(data);
+        builder.setContentText(data.getString("url"));
         NotificationManager notificationManager = (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
         Uri uri = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION);
         builder.setSound(uri);
@@ -61,10 +65,10 @@ public class PushListenerService extends GcmListenerService {
         Log.v(TAG, "count " + countNotification);
     }
 
-    private Intent launchActivity(Context context, String data, Class activity) {
+    private Intent launchActivity(Context context,  Bundle data, Class activity) {
         Intent intent = new Intent(context, activity);
         intent.putExtra("data", data);
-        intent.setFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);
+        intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_SINGLE_TOP);
         return intent;
     }
 }

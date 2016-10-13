@@ -12,6 +12,7 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -28,17 +29,34 @@ public class MusicActivity extends AppCompatActivity implements View.OnClickList
     TextView textViewDuration;
     MediaPlayer mediaPlayer;
     Button buttonPlay;
+    private ProgressBar progressBarBuffer;
+    private ProgressBar spinner;
+    TextView editTextUrl;
+    TextView textViewBuffer;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_music);
 
+
+        //Progress bar
+        progressBarBuffer = (ProgressBar) findViewById(R.id.progressBarBuffer);
+        progressBarBuffer.setVisibility(View.GONE);
+        spinner = (ProgressBar) findViewById(R.id.progressBarSpinner);
+        spinner.setVisibility(View.GONE);
+
+
         //Instancia de mi toolbar
         Toolbar myToolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(myToolbar);
 
         textViewDuration = (TextView) findViewById(R.id.textViewDuration);
+        editTextUrl = (TextView) findViewById(R.id.editTextUrl);
+        textViewBuffer = (TextView) findViewById(R.id.textViewBuffer);
+        textViewBuffer.setVisibility(View.GONE);
+
 
         buttonPlay = (Button) findViewById(R.id.buttonExecute);
 
@@ -48,18 +66,61 @@ public class MusicActivity extends AppCompatActivity implements View.OnClickList
         mediaPlayer.setOnPreparedListener(new MediaPlayer.OnPreparedListener() {
             @Override
             public void onPrepared(MediaPlayer mp) {
+                mediaPlayer.setOnBufferingUpdateListener(new MediaPlayer.OnBufferingUpdateListener() {
+                    @Override
+                    public void onBufferingUpdate(MediaPlayer mp, int percent) {
+                        spinner.setVisibility(View.GONE);
+                        setEnabledBufferInformation(true);
+
+                        progressBarBuffer.setProgress(percent);
+
+                        if (percent == 100) {
+
+                            setEnabledBufferInformation(false);
+
+
+                        }
+                    }
+                });
                 HashMap time = (HashMap) ParseTime.getMinutesWithSeconds(mp.getDuration() / 1000);
                 textViewDuration.setText(time.get("minutes").toString() + ":" + time.get("seconds").toString() + " Duracion");
+
                 mp.start();
             }
         });
 
-        if(Utils.CheckPlayServices(this)){
-            Log.d(TAG,"Existe Google Play");
+        if (Utils.CheckPlayServices(this)) {
+            Log.d(TAG, "Existe Google Play");
             Intent i = new Intent(this, RegistrationService.class);
             startService(i);
-        }else {
-            Log.d(TAG,"NO Existe Google Play");
+
+        } else {
+            Log.d(TAG, "NO Existe Google Play");
+        }
+
+        //Si se genera la llamada mediante Notificacion, Reproducir la url de la notificacion
+
+        if (isCallingFromNotification()) {
+            Bundle data = getIntent().getExtras().getBundle("data");
+            String url = data.getString("url");
+            playMusic(url);
+        }
+
+
+    }
+
+    private void setEnabledBufferInformation(boolean state) {
+
+        progressBarBuffer.setEnabled(state);
+        textViewBuffer.setEnabled(state);
+
+        if (state) {
+            progressBarBuffer.setVisibility(View.VISIBLE);
+            textViewBuffer.setVisibility(View.VISIBLE);
+
+        } else {
+            progressBarBuffer.setVisibility(View.GONE);
+            textViewBuffer.setVisibility(View.GONE);
         }
 
     }
@@ -90,13 +151,30 @@ public class MusicActivity extends AppCompatActivity implements View.OnClickList
         Intent imageActivity = new Intent(getApplicationContext(), ImageActivity.class);
         startActivity(imageActivity);
         overridePendingTransition(R.anim.right_in, R.anim.left_out);
+        finish();
     }
 
     public void executeMusicPlayer(View view) {
-        String urlExample = "http://sound.vmusice.net/download/RJZNvlHqkYxQTktq-XvkGSjkaiuhHP5ThQd9zRZdgXUmEAqdf7mhQkA9lsIAiSpvS46MRte2BCe4h9foa8NPD1MZScGk8yqfxxzS6H_Bz2kAoaT9Obt7kjj_Pswekw0NWo-wWY3jMON_h78k76CwV2Mol-wWJ0hPSWMqW0SBEgQ265O21PxaF66xWysnuno7wlQKtN94DHlEWU4CdJNtrA/justin_timberlake_cant_cant_stop_the_feeling_saxity_ft_angie_keilhauer_remix_(vmusice.net).mp3";
+        playMusic(null);
+    }
+
+    private void playMusic(String url) {
+        spinner.setVisibility(View.VISIBLE);
+        String urlExample = "https://mp3skull.onl/api/soundcloud/dl/?d=eyJ0aXRsZSI6IlJpaGFubmEgLSBXb3JrIChMb3N0IEtpbmdzIFJlbWl4KSIsInVybCI6Imh0dHBzOi8vYXBpLnNvdW5kY2xvdWQuY29tL3RyYWNrcy8yNTM5MDg3NzMvc3RyZWFtP2NsaWVudF9pZD05OTdmNzk1MWE0NjhmNjU0ZDUxZjJjM2VhYTM5OTY0NCMubXAzIn0=";
+
+        if (url != null) {
+            urlExample = url;
+        } else if (!editTextUrl.getText().toString().equals("")) {
+            urlExample = editTextUrl.getText().toString();
+        } else {
+            //default
+        }
 
         if (mediaPlayer.isPlaying()) {
             Toast.makeText(getApplicationContext(), "Ya se encuentra sonando una cancion", Toast.LENGTH_SHORT).show();
+            mediaPlayer.stop();
+            mediaPlayer.reset();
+
         } else {
             try {
 
@@ -109,7 +187,15 @@ public class MusicActivity extends AppCompatActivity implements View.OnClickList
                 Log.e(TAG, "Error intentando reproducir la musica: " + e);
             }
         }
+    }
 
+    private boolean isCallingFromNotification() {
+
+        if (getIntent().getExtras() != null) {
+            return true;
+        }
+
+        return false;
     }
 
     @Override
@@ -125,7 +211,11 @@ public class MusicActivity extends AppCompatActivity implements View.OnClickList
                 case R.id.buttonStop:
                     mediaPlayer.stop();
                     mediaPlayer.reset();
+
+                    progressBarBuffer.setProgress(0);
                     effectActivateButton(buttonPlay);
+                    setEnabledBufferInformation(false);
+                    spinner.setVisibility(View.GONE);
                     break;
             }
         }
@@ -135,4 +225,6 @@ public class MusicActivity extends AppCompatActivity implements View.OnClickList
         buttonPlay.setEnabled(true);
 //        buttonPlay.setBackgroundColor(Color.);
     }
+
+
 }

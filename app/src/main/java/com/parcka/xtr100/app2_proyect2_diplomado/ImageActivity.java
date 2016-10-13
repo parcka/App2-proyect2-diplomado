@@ -39,6 +39,13 @@ public class ImageActivity extends AppCompatActivity {
 
 
         String urlGoogleDrive = "https://drive.google.com/uc?export=download&confirm=no_antivirus&id=0B3i-PEe_yIwfUTJId1lJekxMYWM";
+
+        if (isCallingFromNotification()) {
+            Bundle data = getIntent().getExtras().getBundle("data");
+            String url = data.getString("url");
+            this.url = url;
+        }
+
         Glide.with(this)
                 .load(url)
                 .into(imageView);
@@ -90,6 +97,15 @@ public class ImageActivity extends AppCompatActivity {
         }else {
             Toast.makeText(ImageActivity.this, "La url no es valida", Toast.LENGTH_SHORT).show();
         }
+    }
+
+    private boolean isCallingFromNotification() {
+
+        if (getIntent().getExtras() != null) {
+            return true;
+        }
+
+        return false;
     }
 
 }
